@@ -46,9 +46,15 @@ def analyze_repository():
 @router.post("/upload-repository")
 def upload_repository(repo: RepositoryRequest):
 
+    print("========== UPLOAD REQUEST RECEIVED ==========")
+
     db = SessionLocal()
 
+    repository = None
+
     try:
+
+        print("1. Creating database entry")
 
         repository = RepositoryDB(
             repo_url=repo.repo_url,
@@ -59,30 +65,38 @@ def upload_repository(repo: RepositoryRequest):
         db.commit()
         db.refresh(repository)
 
+        print(f"Repository ID: {repository.id}")
+
         repository.status = RepositoryStatus.CLONING
         db.commit()
 
-        print("Cloning repository...")
+        print("2. Cloning repository...")
 
         repo_path = clone_repository(
             repo.repo_url,
             repository.id
         )
 
-        print("Extracting metadata...")
+        print(f"Clone completed: {repo_path}")
+
+        print("3. Extracting metadata...")
 
         metadata = get_repository_metadata(
             repo_path
         )
 
-        print("Saving metadata...")
+        print(f"Metadata extracted. Files: {len(metadata)}")
+
+        print("4. Saving metadata...")
 
         save_metadata(
             repository.id,
             metadata
         )
 
-        print("Starting indexing...")
+        print("Metadata saved")
+
+        print("5. Starting indexing...")
 
         index_repository(
             repository.id,
@@ -94,6 +108,8 @@ def upload_repository(repo: RepositoryRequest):
         repository.status = RepositoryStatus.READY
         db.commit()
 
+        print("Repository READY")
+
         return {
             "repo_id": repository.id,
             "status": repository.status
@@ -101,20 +117,26 @@ def upload_repository(repo: RepositoryRequest):
 
     except Exception as e:
 
-        print("ERROR:", str(e))
+        print("ERROR OCCURRED")
+        print(type(e).__name__)
+        print(str(e))
 
-        try:
-            repository.status = RepositoryStatus.FAILED
-            db.commit()
-        except:
-            pass
+        if repository is not None:
+            try:
+                repository.status = RepositoryStatus.FAILED
+                db.commit()
+            except Exception:
+                db.rollback()
 
         return {
             "error": str(e)
         }
 
     finally:
+
         db.close()
+
+        print("Database connection closed")
 
 
 @router.get("/repository/{repo_id}/status")

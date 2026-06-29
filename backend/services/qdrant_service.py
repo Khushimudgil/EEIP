@@ -1,3 +1,6 @@
+import os
+from dotenv import load_dotenv
+
 from qdrant_client import QdrantClient
 from qdrant_client.models import (
     VectorParams,
@@ -8,9 +11,11 @@ from qdrant_client.models import (
     MatchValue
 )
 
+load_dotenv()
+
 client = QdrantClient(
-    host="localhost",
-    port=6333
+    url=os.getenv("QDRANT_URL"),
+    api_key=os.getenv("QDRANT_API_KEY")
 )
 
 
@@ -44,44 +49,40 @@ def save_embedding(
     embedding
 ):
 
-    chunk_id = str(
-        abs(
-            hash(
-                chunk["file_path"]
-                + chunk["name"]
-                + chunk["type"]
-            )
-        ) % (10**9)
-    )
+    chunk_id = abs(
+        hash(
+            chunk["file_path"]
+            + chunk["name"]
+            + chunk["type"]
+        )
+    ) % (10 ** 9)
 
     client.upsert(
         collection_name="repository_vectors",
         points=[
             PointStruct(
-                id=int(chunk_id),
-
+                id=chunk_id,
                 vector=embedding,
-
                 payload={
-                "id": chunk_id,
+                    "id": str(chunk_id),
 
-                "repo_id": repo_id,
+                    "repo_id": repo_id,
 
-                "file": chunk["file"],
-                "file_path": chunk["file_path"],
+                    "file": chunk["file"],
+                    "file_path": chunk["file_path"],
 
-                "language": chunk["language"],
+                    "language": chunk["language"],
 
-                "class_name": chunk["class_name"],
-                "function_name": chunk["function_name"],
+                    "class_name": chunk["class_name"],
+                    "function_name": chunk["function_name"],
 
-                "chunk_type": chunk["type"],
-                "chunk_name": chunk["name"],
+                    "chunk_type": chunk["type"],
+                    "chunk_name": chunk["name"],
 
-                "start_line": chunk["start_line"],
-                "end_line": chunk["end_line"],
+                    "start_line": chunk["start_line"],
+                    "end_line": chunk["end_line"],
 
-                "code": chunk["code"]
+                    "code": chunk["code"]
                 }
             )
         ]

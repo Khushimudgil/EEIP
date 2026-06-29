@@ -9,7 +9,8 @@ def build_bm25_index(chunks):
     global bm25
     global documents
 
-    documents = chunks
+    bm25 = None
+    documents = []
 
     tokenized_docs = []
 
@@ -18,21 +19,25 @@ def build_bm25_index(chunks):
         if "code" not in chunk:
             continue
 
-        tokenized_docs.append(
-            chunk["code"].split()
-        )
+        code = chunk["code"].strip()
 
-    bm25 = BM25Okapi(
-        tokenized_docs
-    )
+        if code == "":
+            continue
 
-    print("BM25 Index Built")
+        documents.append(chunk)
+        tokenized_docs.append(code.split())
+
+    if len(tokenized_docs) == 0:
+
+        print("No valid chunks found. BM25 index not created.")
+        return
+
+    bm25 = BM25Okapi(tokenized_docs)
+
+    print(f"BM25 Index Built ({len(tokenized_docs)} documents)")
 
 
-def search_bm25(
-    query,
-    top_k=5
-):
+def search_bm25(query, top_k=5):
 
     global bm25
     global documents
@@ -43,9 +48,7 @@ def search_bm25(
 
     query_tokens = query.split()
 
-    scores = bm25.get_scores(
-        query_tokens
-    )
+    scores = bm25.get_scores(query_tokens)
 
     ranked = sorted(
         zip(documents, scores),
