@@ -13,13 +13,25 @@ from qdrant_client.models import (
 
 load_dotenv()
 
-client = QdrantClient(
-    url=os.getenv("QDRANT_URL"),
-    api_key=os.getenv("QDRANT_API_KEY")
-)
+client = None
+
+
+def get_client():
+    global client
+
+    if client is None:
+        client = QdrantClient(
+            url=os.getenv("QDRANT_URL"),
+            api_key=os.getenv("QDRANT_API_KEY"),
+            check_compatibility=False
+        )
+
+    return client
 
 
 def create_collection():
+
+    client = get_client()
 
     collections = client.get_collections()
 
@@ -48,6 +60,8 @@ def save_embedding(
     chunk,
     embedding
 ):
+
+    client = get_client()
 
     chunk_id = abs(
         hash(
@@ -97,11 +111,11 @@ def search_embeddings(
     limit=10
 ):
 
+    client = get_client()
+
     results = client.query_points(
         collection_name="repository_vectors",
-
         query=embedding,
-
         query_filter=Filter(
             must=[
                 FieldCondition(
@@ -112,7 +126,6 @@ def search_embeddings(
                 )
             ]
         ),
-
         limit=limit
     )
 
