@@ -1,31 +1,26 @@
-import os
-import google.generativeai as genai
+from sentence_transformers import SentenceTransformer
 
-genai.configure(
-    api_key=os.getenv("GEMINI_API_KEY")
-)
+model = None
+
+
+def get_model():
+    global model
+
+    if model is None:
+        print("Loading embedding model...")
+        model = SentenceTransformer("all-MiniLM-L6-v2")
+        print("Embedding model loaded")
+
+    return model
 
 
 def generate_embedding(text):
 
+    model = get_model()
+
     if isinstance(text, list):
-        embeddings = []
+        embeddings = model.encode(text)
+        return embeddings.tolist()
 
-        for item in text:
-            result = genai.embed_content(
-                model="models/embedding-001",
-                content=item,
-                task_type="retrieval_document"
-            )
-
-            embeddings.append(result["embedding"])
-
-        return embeddings
-
-    result = genai.embed_content(
-        model="models/embedding-001",
-        content=text,
-        task_type="retrieval_query"
-    )
-
-    return result["embedding"]
+    embedding = model.encode(text)
+    return embedding.tolist()
