@@ -3,6 +3,8 @@ import {
   Upload,
   Activity,
   MessageSquare,
+  BookOpen,
+  Network,
   BrainCircuit
 } from "lucide-react";
 
@@ -20,24 +22,24 @@ function Sidebar() {
   return (
     <div
       className="
-        w-72
-        min-h-screen
-        bg-[#1c140d]/90
-        backdrop-blur-xl
-        border-r
-        border-[#3a2b20]
-        p-6
-        shadow-2xl
-      "
+      w-72
+      min-h-screen
+      bg-[#1c140d]/90
+      backdrop-blur-xl
+      border-r
+      border-[#3a2b20]
+      p-6
+      shadow-2xl
+    "
     >
-
       <div className="flex items-center gap-4 mb-12">
 
         <div className="bg-[#c68b59] p-3 rounded-xl shadow-lg">
-          <BrainCircuit size={24} />
+          <BrainCircuit size={24}/>
         </div>
 
         <div>
+
           <h1 className="text-2xl font-bold text-[#f5e6d3]">
             EEIP
           </h1>
@@ -45,46 +47,44 @@ function Sidebar() {
           <p className="text-[#b8a08d] text-sm">
             AI Repository Intelligence
           </p>
+
         </div>
 
       </div>
 
       <div className="space-y-3">
 
-        <NavLink
-          to="/"
-          className={linkClass}
-        >
-          <LayoutDashboard size={20} />
+        <NavLink to="/" className={linkClass}>
+          <LayoutDashboard size={20}/>
           Dashboard
         </NavLink>
 
-        <NavLink
-          to="/upload"
-          className={linkClass}
-        >
-          <Upload size={20} />
+        <NavLink to="/upload" className={linkClass}>
+          <Upload size={20}/>
           Upload Repository
         </NavLink>
 
-        <NavLink
-          to="/status"
-          className={linkClass}
-        >
-          <Activity size={20} />
+        <NavLink to="/status" className={linkClass}>
+          <Activity size={20}/>
           Repository Status
         </NavLink>
 
-        <NavLink
-          to="/chat"
-          className={linkClass}
-        >
-          <MessageSquare size={20} />
+        <NavLink to="/chat" className={linkClass}>
+          <MessageSquare size={20}/>
           Chat Assistant
         </NavLink>
 
-      </div>
+        <NavLink to="/guide" className={linkClass}>
+          <BookOpen size={20}/>
+          Repository Guide
+        </NavLink>
 
+        <NavLink to="/knowledge-graph" className={linkClass}>
+          <Network size={20}/>
+          Knowledge Graph
+        </NavLink>
+
+      </div>
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
+import Layout from "../components/Layout";
+import { Bot, User, Send, Sparkles } from "lucide-react";
 
 function Chat() {
 
@@ -15,16 +17,13 @@ function Chat() {
     const askQuestion = async () => {
 
         if (!repoId || !question.trim()) {
-            alert(
-                "Please enter Repository ID and Question"
-            );
+            alert("Please enter Repository ID and Question");
             return;
         }
 
         try {
 
             setLoading(true);
-
             setAnswer("");
             setSources([]);
             setQueryType("");
@@ -33,208 +32,228 @@ function Chat() {
                 "http://localhost:8001/chat",
                 {
                     repo_id: Number(repoId),
-                    question: question
+                    question
                 }
             );
 
-            setAnswer(
-                response.data.answer || ""
-            );
+            setAnswer(response.data.answer || "");
+            setSources(response.data.sources || []);
+            setQueryType(response.data.query_type || "");
 
-            setSources(
-                response.data.sources || []
-            );
+        } catch (err) {
 
-            setQueryType(
-                response.data.query_type || ""
-            );
+            console.log(err);
 
-        } catch (error) {
-
-            console.error(error);
-
-            setAnswer(
-                "Failed to get answer from backend."
-            );
+            setAnswer("Unable to generate response.");
 
         } finally {
 
             setLoading(false);
+
         }
+
     };
 
     return (
-        <div
-            style={{
-                maxWidth: "1000px",
-                margin: "40px auto",
-                padding: "20px",
-                fontFamily: "Arial"
-            }}
-        >
-            <h1>Repository Chat</h1>
 
-            <input
-                type="number"
-                placeholder="Repository ID"
-                value={repoId}
-                onChange={(e) =>
-                    setRepoId(e.target.value)
-                }
-                style={{
-                    width: "100%",
-                    padding: "12px",
-                    marginBottom: "15px",
-                    borderRadius: "6px",
-                    border: "1px solid #ccc"
-                }}
-            />
+        <Layout>
 
-            <textarea
-                placeholder="Ask a question..."
-                value={question}
-                onChange={(e) =>
-                    setQuestion(e.target.value)
-                }
-                rows={5}
-                style={{
-                    width: "100%",
-                    padding: "12px",
-                    borderRadius: "6px",
-                    border: "1px solid #ccc"
-                }}
-            />
+            <div className="max-w-5xl">
 
-            <button
-                onClick={askQuestion}
-                disabled={loading}
-                style={{
-                    marginTop: "15px",
-                    padding: "12px 25px",
-                    cursor: loading
-                        ? "not-allowed"
-                        : "pointer"
-                }}
-            >
-                {loading
-                    ? "Thinking..."
-                    : "Ask"}
-            </button>
+                <h1 className="text-5xl font-bold text-amber-50 mb-3">
 
-            {answer && (
+                    AI Repository Chat
 
-                <div
-                    style={{
-                        marginTop: "30px",
-                        padding: "20px",
-                        border: "1px solid #ddd",
-                        borderRadius: "8px"
-                    }}
-                >
+                </h1>
 
-                    {queryType && (
-                        <div
-                            style={{
-                                marginBottom: "20px",
-                                padding: "12px",
-                                backgroundColor:
-                                    "#e0f2fe",
-                                borderRadius: "8px"
-                            }}
-                        >
-                            <strong>
-                                Agent Used:
-                            </strong>{" "}
-                            {queryType}
-                        </div>
-                    )}
+                <p className="text-amber-200/70 mb-10">
 
-                    <h2>Answer</h2>
+                    Ask anything about your repository.
 
-                    <div
-                        style={{
-                            whiteSpace:
-                                "pre-wrap",
-                            lineHeight: "1.7"
-                        }}
+                </p>
+
+                <div className="bg-[#2A1E17] rounded-3xl border border-amber-900/40 p-8">
+
+                    <input
+                        type="number"
+                        placeholder="Repository ID"
+                        value={repoId}
+                        onChange={(e)=>setRepoId(e.target.value)}
+                        className="w-full p-4 rounded-xl bg-[#1A120E] border border-amber-900/40 mb-5"
+                    />
+
+                    <textarea
+                        rows={5}
+                        value={question}
+                        onChange={(e)=>setQuestion(e.target.value)}
+                        placeholder="Ask your question..."
+                        className="w-full p-4 rounded-xl bg-[#1A120E] border border-amber-900/40 resize-none"
+                    />
+
+                    <button
+                        onClick={askQuestion}
+                        disabled={loading}
+                        className="mt-6 flex items-center gap-2 bg-amber-700 hover:bg-amber-600 px-6 py-3 rounded-xl"
                     >
-                        {answer}
+                        <Send size={18}/>
+                        {loading ? "Thinking..." : "Ask AI"}
+                    </button>
+
+                </div>
+
+                {question && (
+
+                    <div className="mt-10 flex justify-end">
+
+                        <div className="bg-amber-700 rounded-3xl p-5 max-w-3xl flex gap-4">
+
+                            <User/>
+
+                            <div>
+
+                                <p className="font-semibold">
+
+                                    You
+
+                                </p>
+
+                                <p>
+
+                                    {question}
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
-                    {sources.length > 0 && (
-                        <>
-                            <hr
-                                style={{
-                                    marginTop:
-                                        "25px",
-                                    marginBottom:
-                                        "20px"
-                                }}
-                            />
+                )}
 
-                            <h2>Sources</h2>
+                {answer && (
 
-                            {sources.map(
-                                (
-                                    source,
-                                    index
-                                ) => (
+                    <div className="mt-8 flex">
+
+                        <div className="bg-[#2A1E17] rounded-3xl p-6 max-w-4xl flex gap-5 border border-amber-900/40">
+
+                            <Bot className="text-amber-400"/>
+
+                            <div>
+
+                                <div className="flex items-center gap-3 mb-3">
+
+                                    <h2 className="font-bold">
+
+                                        EEIP Assistant
+
+                                    </h2>
+
+                                    {
+
+                                        queryType &&
+
+                                        <span className="bg-amber-700 px-3 py-1 rounded-full text-sm">
+
+                                            <Sparkles size={14} className="inline mr-1"/>
+
+                                            {queryType}
+
+                                        </span>
+
+                                    }
+
+                                </div>
+
+                                <div className="whitespace-pre-wrap leading-8 text-amber-50/90">
+
+                                    {answer}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                )}
+
+                {
+
+                    sources.length>0 &&
+
+                    <div className="mt-10">
+
+                        <h2 className="text-2xl font-bold mb-6">
+
+                            Sources
+
+                        </h2>
+
+                        <div className="grid md:grid-cols-2 gap-5">
+
+                            {
+
+                                sources.map((source,index)=>(
+
                                     <div
-                                        key={
-                                            index
-                                        }
-                                        style={{
-                                            marginBottom:
-                                                "15px",
-                                            padding:
-                                                "15px",
-                                            backgroundColor:
-                                                "#f5f5f5",
-                                            borderRadius:
-                                                "8px",
-                                            border:
-                                                "1px solid #ddd"
-                                        }}
+                                        key={index}
+                                        className="bg-[#2A1E17] rounded-2xl border border-amber-900/40 p-5"
                                     >
-                                        <p>
-                                            <strong>
-                                                File:
-                                            </strong>{" "}
-                                            {
-                                                source.file
-                                            }
-                                        </p>
 
                                         <p>
-                                            <strong>
-                                                Chunk:
-                                            </strong>{" "}
-                                            {
-                                                source.chunk
-                                            }
+
+                                            <strong>File:</strong>
+
+                                            {" "}
+
+                                            {source.file}
+
                                         </p>
 
-                                        <p>
-                                            <strong>
-                                                Lines:
-                                            </strong>{" "}
-                                            {
-                                                source.start_line
-                                            }
-                                            {" - "}
-                                            {
-                                                source.end_line
-                                            }
+                                        <p className="mt-2">
+
+                                            <strong>Chunk:</strong>
+
+                                            {" "}
+
+                                            {source.chunk}
+
                                         </p>
+
+                                        <p className="mt-2">
+
+                                            <strong>Lines:</strong>
+
+                                            {" "}
+
+                                            {source.start_line}
+
+                                            -
+
+                                            {source.end_line}
+
+                                        </p>
+
                                     </div>
-                                )
-                            )}
-                        </>
-                    )}
-                </div>
-            )}
-        </div>
+
+                                ))
+
+                            }
+
+                        </div>
+
+                    </div>
+
+                }
+
+            </div>
+
+        </Layout>
+
     );
+
 }
 
 export default Chat;

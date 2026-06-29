@@ -1,173 +1,229 @@
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+import {
+  Upload,
+  Activity,
+  MessageSquare,
+  BookOpen,
+  Network,
+  Database
+} from "lucide-react";
+
 import Layout from "../components/Layout";
-import { motion } from "framer-motion";
 
 function Dashboard() {
 
-  const stats = [
-    {
-      title: "Repositories",
-      value: "0"
-    },
-    {
-      title: "Files",
-      value: "0"
-    },
-    {
-      title: "Embeddings",
-      value: "0"
-    },
-    {
-      title: "Searches",
-      value: "0"
+  const [stats, setStats] = useState({
+    repositories: 0,
+    files_parsed: 0,
+    embeddings: 0,
+    ai_queries: 0
+  });
+
+  useEffect(() => {
+    loadDashboard();
+  }, []);
+
+  const loadDashboard = async () => {
+
+    try {
+
+      const response = await axios.get(
+        "http://localhost:8001/dashboard-stats"
+      );
+
+      setStats(response.data);
+
+    } catch (error) {
+
+      console.log(error);
+
     }
+
+  };
+
+  const cards = [
+
+    {
+      title: "Upload Repository",
+      description: "Connect and analyze GitHub repositories.",
+      path: "/upload",
+      icon: <Upload size={24} />
+    },
+
+    {
+      title: "Repository Status",
+      description: "Monitor indexing progress.",
+      path: "/status",
+      icon: <Activity size={24} />
+    },
+
+    {
+      title: "AI Chat",
+      description: "Ask questions about repository code.",
+      path: "/chat",
+      icon: <MessageSquare size={24} />
+    },
+
+    {
+      title: "Repository Guide",
+      description: "Generate complete documentation.",
+      path: "/guide",
+      icon: <BookOpen size={24} />
+    },
+
+    {
+      title: "Knowledge Graph",
+      description: "Explore repository structure.",
+      path: "/knowledge-graph",
+      icon: <Network size={24} />
+    }
+
   ];
 
   return (
+
     <Layout>
 
-      {/* Header */}
+      <div className="max-w-7xl">
 
-      <div className="mb-10">
-
-        <h1 className="text-5xl font-bold text-[#f5e6d3] mb-3">
-          Dashboard
+        <h1 className="text-5xl font-bold text-amber-50 mb-3">
+          EEIP Dashboard
         </h1>
 
-        <p className="text-[#b8a08d] text-lg">
+        <p className="text-amber-200/70 mb-10">
           Enterprise Engineering Intelligence Platform
         </p>
 
-      </div>
+        {/* Statistics */}
 
-      {/* Stats */}
+        <div className="grid md:grid-cols-4 gap-6 mb-10">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <StatCard
+            title="Repositories"
+            value={stats.repositories}
+          />
 
-        {stats.map((item, index) => (
+          <StatCard
+            title="Files Parsed"
+            value={stats.files_parsed}
+          />
 
-          <motion.div
-            key={item.title}
-            initial={{
-              opacity: 0,
-              y: 20
-            }}
-            animate={{
-              opacity: 1,
-              y: 0
-            }}
-            transition={{
-              delay: index * 0.1
-            }}
-            whileHover={{
-              scale: 1.03
-            }}
-            className="
-              bg-[#241912]/80
-              backdrop-blur-lg
-              border
-              border-[#3a2b20]
-              rounded-2xl
-              p-6
-              shadow-xl
-              hover:border-[#c68b59]
-              transition-all
-              duration-300
-            "
-          >
+          <StatCard
+            title="Embeddings"
+            value={stats.embeddings}
+          />
 
-            <h3 className="text-[#b8a08d] text-lg">
-              {item.title}
-            </h3>
-
-            <p className="text-5xl font-bold text-[#f5e6d3] mt-4">
-              {item.value}
-            </p>
-
-          </motion.div>
-
-        ))}
-
-      </div>
-
-      {/* Recent Activity */}
-
-      <div className="mt-10">
-
-        <div
-          className="
-            bg-[#241912]/80
-            backdrop-blur-lg
-            border
-            border-[#3a2b20]
-            rounded-2xl
-            p-8
-            shadow-xl
-          "
-        >
-
-          <div className="flex items-center justify-between mb-6">
-
-            <h2 className="text-2xl font-semibold text-[#f5e6d3]">
-              Recent Activity
-            </h2>
-
-            <span
-              className="
-                px-4
-                py-2
-                rounded-full
-                bg-[#8b5e3c]
-                text-sm
-                text-white
-              "
-            >
-              No Activity
-            </span>
-
-          </div>
-
-          <div className="text-[#b8a08d]">
-            No repositories analyzed yet.
-          </div>
+          <StatCard
+            title="AI Queries"
+            value={stats.ai_queries}
+          />
 
         </div>
 
-      </div>
+        {/* Modules */}
 
-      {/* Welcome Card */}
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
 
-      <div className="mt-10">
+          {cards.map((card) => (
 
-        <div
-          className="
-            rounded-3xl
-            p-10
-            border
-            border-[#3a2b20]
-            bg-gradient-to-r
-            from-[#3a2415]
-            via-[#5a3924]
-            to-[#7a4d2e]
-            shadow-2xl
-          "
-        >
+            <Link
+              key={card.path}
+              to={card.path}
+            >
 
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Welcome to EEIP
-          </h2>
+              <div
+                className="
+                bg-[#2A1E17]
+                border
+                border-amber-900/40
+                rounded-3xl
+                p-8
+                hover:border-amber-600
+                transition-all
+                duration-300
+                hover:-translate-y-1
+                h-full
+              "
+              >
 
-          <p className="text-[#f5e6d3] text-lg">
-            Upload repositories, generate embeddings,
-            perform hybrid search, and chat with your codebase
-            using AI-powered repository intelligence.
-          </p>
+                <div
+                  className="
+                  bg-amber-700
+                  w-14
+                  h-14
+                  rounded-2xl
+                  flex
+                  items-center
+                  justify-center
+                  mb-6
+                "
+                >
+                  {card.icon}
+                </div>
+
+                <h2 className="text-2xl font-semibold text-white mb-3">
+                  {card.title}
+                </h2>
+
+                <p className="text-amber-200/70">
+                  {card.description}
+                </p>
+
+              </div>
+
+            </Link>
+
+          ))}
 
         </div>
 
       </div>
 
     </Layout>
+
   );
+
+}
+
+function StatCard({ title, value }) {
+
+  return (
+
+    <div
+      className="
+      bg-[#2A1E17]
+      border
+      border-amber-900/40
+      rounded-3xl
+      p-6
+      shadow-xl
+    "
+    >
+
+      <div className="flex items-center gap-3 mb-4">
+
+        <Database
+          size={24}
+          className="text-amber-300"
+        />
+
+        <p className="text-amber-300 text-xl">
+          {title}
+        </p>
+
+      </div>
+
+      <h1 className="text-5xl font-bold text-white">
+        {value}
+      </h1>
+
+    </div>
+
+  );
+
 }
 
 export default Dashboard;

@@ -15,6 +15,12 @@ from services.git_service import clone_repository
 from services.repository_metadata_service import get_repository_metadata
 from services.indexing_service import index_repository
 from services.chat_service import answer_question
+from services.guide_generator import generate_guide
+from services.knowledge_graph import build_knowledge_graph
+from models.chat_history_db import ChatHistoryDB
+
+
+
 
 
 router = APIRouter()
@@ -141,9 +147,55 @@ def get_repository_status(repo_id: int):
 @router.post("/chat")
 def chat(request: ChatRequest):
 
-    result = answer_question(
-    repo_id=request.repo_id,
-    question=request.question
-   )
+    db = SessionLocal()
 
-    return result
+    try:
+
+        result = answer_question(
+            repo_id=request.repo_id,
+            question=request.question
+        )
+
+        history = ChatHistoryDB(
+            repo_id=request.repo_id,
+            question=request.question,
+            answer=result.get("answer", "")
+        )
+
+        db.add(history)
+        db.commit()
+
+        return result
+
+    except Exception as e:
+
+        db.rollback()
+
+        return {
+            "error": str(e)
+        }
+
+    finally:
+
+        db.close()
+
+@router.post("/generate-guide")
+def generate_repository_guide(repo_id: int):
+
+    repo_path = f"repos/repo_{repo_id}"
+
+    guide = generate_guide(repo_path)
+
+    return {
+        "guide": guide
+    }
+@router.post("/knowledge-graph")
+def knowledge_graph(repo_id: int):
+
+    repo_path = f"repos/repo_{repo_id}"
+
+    graph = build_knowledge_graph(
+        repo_path
+    )
+
+    return graph

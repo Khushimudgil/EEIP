@@ -20,9 +20,9 @@ function UploadRepo() {
         repo_url: repoUrl,
       });
 
-      alert(
-        `Repository uploaded! ID: ${response.data.repo_id}`
-      );
+      console.log(response.data);
+
+      alert(JSON.stringify(response.data));
 
       setRepoUrl("");
     } catch (error) {
