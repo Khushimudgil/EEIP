@@ -1,23 +1,21 @@
 from sentence_transformers import SentenceTransformer
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = None
+
+
+def get_model():
+    global model
+
+    if model is None:
+        print("Loading embedding model...")
+        model = SentenceTransformer("all-MiniLM-L6-v2")
+        print("Embedding model loaded")
+
+    return model
 
 
 def generate_embedding(text):
-    embedding = model.encode(
-        text,
-        convert_to_numpy=True
-    )
+
+    embedding = get_model().encode(text)
 
     return embedding.tolist()
-
-
-def generate_embeddings(texts):
-    embeddings = model.encode(
-        texts,
-        batch_size=64,
-        show_progress_bar=True,
-        convert_to_numpy=True
-    )
-
-    return embeddings.tolist()
