@@ -1,4 +1,4 @@
-from services.embedding_service import generate_embeddings
+from services.embedding_service import generate_embedding
 from services.qdrant_service import (
     create_collection,
     save_embedding
@@ -50,7 +50,7 @@ def index_repository(repo_id, metadata):
 
     print("Generating embeddings...")
 
-    embeddings = generate_embeddings(texts)
+    embeddings = generate_embedding(texts)
 
     print("Saving embeddings to Qdrant...")
 
