@@ -22,7 +22,7 @@ function Guide() {
             setGuide("");
 
             const response = await axios.post(
-                `http://localhost:8001/generate-guide?repo_id=${repoId}`
+                `http://localhost:8000/generate-guide?repo_id=${repoId}`
             );
 
             setGuide(response.data.guide);

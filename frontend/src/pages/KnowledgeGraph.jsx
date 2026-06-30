@@ -21,7 +21,7 @@ function KnowledgeGraph() {
             setLoading(true);
 
             const response = await axios.post(
-                `http://localhost:8001/knowledge-graph?repo_id=${repoId}`
+                `http://localhost:8000/knowledge-graph?repo_id=${repoId}`
             );
 
             setGraph(response.data);

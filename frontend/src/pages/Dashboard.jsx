@@ -31,7 +31,7 @@ function Dashboard() {
     try {
 
       const response = await axios.get(
-        "http://localhost:8001/dashboard-stats"
+        "http://localhost:8000/dashboard-stats"
       );
 
       setStats(response.data);

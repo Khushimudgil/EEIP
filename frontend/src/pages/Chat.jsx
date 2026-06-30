@@ -29,7 +29,7 @@ function Chat() {
             setQueryType("");
 
             const response = await axios.post(
-                "http://localhost:8001/chat",
+                "http://localhost:8000/chat",
                 {
                     repo_id: Number(repoId),
                     question

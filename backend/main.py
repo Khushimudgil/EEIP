@@ -12,16 +12,16 @@ from models.repository_db import RepositoryDB
 from models.chat_history_db import ChatHistoryDB
 print("4. Database models imported")
 
-from api.repository import router as repository_router
+# from api.repository import router as repository_router
 print("5. Repository router imported")
 
-from api.search import router as search_router
+# from api.search import router as search_router
 print("6. Search router imported")
 
-from api.progress import router as progress_router
+# from api.progress import router as progress_router
 print("7. Progress router imported")
 
-from api.dashboard import router as dashboard_router
+# from api.dashboard import router as dashboard_router
 print("8. Dashboard router imported")
 
 # Create all database tables
