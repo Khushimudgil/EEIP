@@ -25,7 +25,7 @@ from api.dashboard import router as dashboard_router
 print("8. Dashboard router imported")
 
 # Create all database tables
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 print("9. Database tables created")
 
 app = FastAPI(
