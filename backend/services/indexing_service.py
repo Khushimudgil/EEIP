@@ -30,7 +30,7 @@ def index_repository(repo_id, metadata):
             code = chunk.get("code", "").strip()
 
             # Skip empty or tiny chunks
-            if len(code.split()) < 20:
+            if len(code) == 0:
                 continue
 
             all_chunks.append(chunk)

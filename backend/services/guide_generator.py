@@ -123,7 +123,7 @@ pip install -r requirements.txt
 
 2. Start Backend
 
-python -m uvicorn main:app --reload --port 8001
+python -m uvicorn main:app --reload --port 8000
 
 3. Start Frontend
 

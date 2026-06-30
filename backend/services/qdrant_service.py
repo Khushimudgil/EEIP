@@ -40,19 +40,30 @@ def create_collection():
         for collection in collections.collections
     ]
 
-    if "repository_vectors" in existing:
-        print("Collection already exists")
-        return
+    if "repository_vectors" not in existing:
 
-    client.create_collection(
-        collection_name="repository_vectors",
-        vectors_config=VectorParams(
-            size=384,
-            distance=Distance.COSINE
+        client.create_collection(
+            collection_name="repository_vectors",
+            vectors_config=VectorParams(
+                size=384,
+                distance=Distance.COSINE
+            )
         )
-    )
 
-    print("Collection created")
+        print("Collection created")
+
+    else:
+        print("Collection already exists")
+
+    try:
+        client.create_payload_index(
+            collection_name="repository_vectors",
+            field_name="repo_id",
+            field_schema="integer"
+        )
+        print("repo_id payload index created")
+    except Exception as e:
+        print("Index already exists:", e)
 
 
 def save_embedding(
